@@ -2,12 +2,12 @@ import jsonschema
 from django.core import checks, exceptions
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from jsonschema.validators import validator_for
+from jsonschema import validators
 
 
 class CustomJSONField(models.JSONField):
     default_error_messages = {
-        "invalid_data": _("Value does not match the schema."),
+        "invalid_data": _("Value does not match the JSON schema."),
     }
 
     def __init__(self, schema: dict, **kwargs):
@@ -15,6 +15,10 @@ class CustomJSONField(models.JSONField):
             raise ValueError("The schema parameter must be a dictionary.")
         self.schema = schema
         super().__init__(**kwargs)
+
+    @property
+    def non_db_attrs(self):
+        return super().non_db_attrs + ("schema",)
 
     def check(self, **kwargs):
         return [
@@ -35,7 +39,7 @@ class CustomJSONField(models.JSONField):
             ) from e
 
     def _check_jsonschema(self):
-        validator = validator_for(self.schema)
+        validator = validators.validator_for(self.schema)
         try:
             validator.check_schema(self.schema)
         except jsonschema.exceptions.SchemaError:

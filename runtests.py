@@ -9,4 +9,4 @@ def exit_on_failure(ret, message=None):
 
 
 if __name__ == "__main__":
-    exit_on_failure(pytest.main())
+    exit_on_failure(pytest.main(["--cov", "django_custom_jsonfield", "--cov-report", "xml"]))

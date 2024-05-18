@@ -1,11 +1,23 @@
+import jsonschema
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 
 class CustomJSONField(serializers.JSONField):
-    def to_internal_value(self, data):
-        data = super().to_internal_value(data)
+    default_error_messages = {
+        "invalid_data": _("Value does not match the JSON schema."),
+    }
 
-        # if jsonschema.validate(data):
-        #     pass
+    def __init__(self, schema: dict, **kwargs):
+        self.schema = schema
+        super().__init__(**kwargs)
+        self.validators.append(self._validate_data)
 
-        return data
+    def _validate_data(self, value):
+        try:
+            jsonschema.validate(value, self.schema)
+        except jsonschema.exceptions.ValidationError:
+            raise serializers.ValidationError(
+                self.default_error_messages["invalid_data"],
+                code="invalid_data",
+            )

@@ -6,7 +6,10 @@ def pytest_configure(config):
 
     settings.configure(
         DATABASES={
-            "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": ":memory:",
+            },
         },
         SECRET_KEY="doesn't really matter",
     )

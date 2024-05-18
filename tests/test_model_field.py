@@ -1,5 +1,9 @@
+from typing import Any
+
 import pytest
+from django import VERSION as DJANGO_VERSION
 from django.core import checks
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from django_custom_jsonfield.fields import CustomJSONField
@@ -13,7 +17,7 @@ from django_custom_jsonfield.fields import CustomJSONField
         {"pattern": "*invalid.regex"},
     ],
 )
-def test_model_check_invalid_schema(schema: dict):
+def test_json_schema_invalid(schema: dict):
     class FakeModel(models.Model):
         json_field = CustomJSONField(schema=schema)
 
@@ -31,3 +35,77 @@ def test_model_check_invalid_schema(schema: dict):
     ]
 
     assert errors == expected_errors
+
+
+def test_json_schema_ok():
+    class FakeModel(models.Model):
+        json_field = CustomJSONField(
+            schema={
+                "type": "array",
+                "minLength": 1,
+                "maxLength": 1,
+                "items": {"type": "integer"},
+            },
+        )
+
+        class Meta:
+            app_label = "test_app"
+
+    instance = FakeModel()
+
+    assert instance.check() == []
+
+
+@pytest.mark.parametrize(
+    "schema",
+    [10, 10.00, list(), tuple(), set(), "", b"", True, None],
+)
+def test_schema_type_invalid(schema: Any):
+    with pytest.raises(ValueError) as e:
+        CustomJSONField(schema=schema)
+
+    assert e.value.args[0] == "The schema parameter must be a dictionary."
+
+
+@pytest.mark.parametrize(
+    "value,schema",
+    [
+        (
+            {"name": "John"},
+            {
+                "type": "object",
+                "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
+                "required": ["name", "age"],
+            },
+        ),
+    ],
+)
+def test_validate_value_against_schema(value, schema):
+    class FakeModel(models.Model):
+        json_field = CustomJSONField(schema=schema)
+
+        class Meta:
+            app_label = "test_app"
+
+    instance = FakeModel()
+    instance.json_field = value
+
+    with pytest.raises(ValidationError) as e:
+        instance.clean_fields()
+
+    assert isinstance(e.value.args[0]["json_field"][0], ValidationError)
+    assert e.value.args[0]["json_field"][0].args[0] == "Value does not match the JSON schema."
+    assert e.value.args[0]["json_field"][0].args[1] == "invalid_data"
+    assert e.value.args[0]["json_field"][0].args[2] == {"value": value}
+
+
+def test_deconstruct():
+    json_field = CustomJSONField(schema={})
+    _, _, _, kwargs = json_field.deconstruct()
+    assert "schema" in kwargs
+
+
+@pytest.mark.skipif(DJANGO_VERSION < (4, 1), reason="non_db_attrs is only available in Django 4.1+")
+def test_non_db_attrs():
+    json_field = CustomJSONField(schema={})
+    assert "schema" in json_field.non_db_attrs
