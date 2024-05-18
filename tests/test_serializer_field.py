@@ -2,7 +2,7 @@ import pytest
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
 
-from django_custom_jsonfield.serializers import CustomJSONField
+from django_custom_jsonfield.rest_framework.serializers import CustomJSONField
 
 
 @pytest.mark.parametrize(

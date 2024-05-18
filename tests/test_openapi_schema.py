@@ -2,8 +2,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from django_custom_jsonfield.openapi import CustomJSONFieldSerializerExtension
-from django_custom_jsonfield.serializers import CustomJSONField
+from django_custom_jsonfield.rest_framework.openapi import CustomJSONFieldSerializerExtension
+from django_custom_jsonfield.rest_framework.serializers import CustomJSONField
 
 
 @pytest.mark.parametrize(
