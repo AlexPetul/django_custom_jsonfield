@@ -9,7 +9,7 @@ from drf_spectacular.openapi import (
 
 
 class CustomJSONFieldSerializerExtension(OpenApiSerializerFieldExtension):
-    target_class = "django_custom_jsonfield.serializers.CustomJSONField"
+    target_class = "django_custom_jsonfield.rest_framework.serializers.CustomJSONField"
 
     def map_serializer_field(self, auto_schema, direction):
         schema = self.target.schema
