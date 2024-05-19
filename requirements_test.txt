@@ -1,5 +1,4 @@
-jsonschema>=4.0
+jsonschema>=4.0,<5
 drf_spectacular
-pytest
 pytest-django
 pytest-cov
