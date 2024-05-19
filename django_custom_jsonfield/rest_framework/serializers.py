@@ -18,6 +18,6 @@ class CustomJSONField(serializers.JSONField):
             jsonschema.validate(value, self.schema)
         except jsonschema.exceptions.ValidationError:
             raise serializers.ValidationError(
-                self.default_error_messages["invalid_data"],
+                self.error_messages["invalid_data"],
                 code="invalid_data",
             )
