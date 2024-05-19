@@ -81,10 +81,10 @@ This package includes extension for `drf-spectacular`, allowing your API documen
 to correctly display the expected JSON schema. To access this feature, install the package with the `[drf]` extra.
 
 ## Migrating existing data
-The `CustomJSONField` does not impose constraints on existing data. 
+The `CustomJSONField` does not impose any constraints on existing data. 
 Therefore, you can change a field from default `JSONField` to `CustomJSONField` even if 
 some rows violate the schema. However, it is recommended to follow these steps to 
-sure a smooth transition:
+ensure a smooth transition:
 
 1. **Create a new field**: add a new field of type `CustomJSONField` to your model.
 2. **Data migration**: Perform a data migration to copy the values from the old field to the new field, ensuring the data conforms to the schema.
