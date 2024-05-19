@@ -9,7 +9,7 @@ An extended JSON field for Django and Django REST framework with validation supp
 
 ### Installation
 
-To install the package, run:
+To install the minimal version of the package, run:
 
 ```text
 pip install django_custom_jsonfield
@@ -38,24 +38,47 @@ class Location(models.Model):
 
 Location(coordinates={"x": 45, "y": 45})  # ok
 Location(coordinates={"x": 45, "z": 45})  # ValidationError
+```
 
+You can customize the error message, if the value didn't pass JSON schema validation:
+
+```python
+class Location(models.Model):
+    coordinates = CustomJSONField(
+        schema={...},
+        error_messages={"invalid_data": "Expected x and y keys."},
+    )
 ```
 
 ### DRF Serializers
-You can also use `CustomJSONField` in Django REST Framework serializers:
+To enable DRF support, install package with extras:
+
+```text
+pip install 'django_custom_jsonfield[drf]'
+```
+
+You can now use `CustomJSONField` in DRF serializers:
 
 ```python
 from rest_framework import serializers
 from django_custom_jsonfield.rest_framework.serializers import CustomJSONField
 
 class LocationSerializer(serializers.Serializer):
-    coordinates = CustomJSONField(schema={...})
+    address = CustomJSONField(schema={"type": "string"})
+```
 
+To specify custom error message use the same positional argument as you use in models:
+```python
+class LocationSerializer(serializers.Serializer):
+    address = CustomJSONField(
+        schema={"type": "string"}, 
+        error_messages={"invalid_data": "Expected type `string`."},
+    )
 ```
 
 ### OpenAPI Integration
 This package includes extension for `drf-spectacular`, allowing your API documentation 
-to correctly display the expected JSON schema.
+to correctly display the expected JSON schema. To access this feature, install the package with the `[drf]` extra.
 
 ## Migrating existing data
 The `CustomJSONField` does not impose constraints on existing data. 
