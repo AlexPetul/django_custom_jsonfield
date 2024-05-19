@@ -39,6 +39,7 @@ class CustomJSONField(models.JSONField):
             ) from e
 
     def _check_jsonschema(self):
+        """Check that the JSON schema is valid."""
         validator = validators.validator_for(self.schema)
         try:
             validator.check_schema(self.schema)
