@@ -14,6 +14,7 @@ class CustomJSONField(serializers.JSONField):
         self.validators.append(self._validate_data)
 
     def _validate_data(self, value):
+        """Validate value against JSON schema."""
         try:
             jsonschema.validate(value, self.schema)
         except jsonschema.exceptions.ValidationError:
