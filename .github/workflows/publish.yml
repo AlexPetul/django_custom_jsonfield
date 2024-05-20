@@ -23,6 +23,9 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
+    - name: Cleanup
+      run: |
+        rm -rf .dist/
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@v1.8.14
       with:
