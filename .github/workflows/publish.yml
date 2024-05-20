@@ -10,8 +10,10 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
+    - name: Clean Workspace
+      uses: AutoModality/action-clean@v1.1.0
     - uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v3
