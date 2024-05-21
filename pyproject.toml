@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "django_custom_jsonfield"
 license = {text = "MIT"}
-description = "Custom"
+description = "An extended JSON field for Django and DRF with validation support using jsonschema."
 requires-python = ">=3.8"
 version = "1.2"
 dependencies = [
