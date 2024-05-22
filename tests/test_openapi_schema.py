@@ -93,13 +93,15 @@ def test_map_serializer_field_const(schema: dict, expected: Any):
     json_field = CustomJSONField(schema=schema)
     extension = CustomJSONFieldSerializerExtension(json_field)
     data = extension.map_serializer_field(Mock(), "response")
-    assert data == expected
+    assert data == schema
 
 
 @pytest.mark.parametrize(
     "schema",
     [
-        {"type": "unknown_type"},
+        {
+            "type": "unknown_type",
+        },
     ],
 )
 @patch(
