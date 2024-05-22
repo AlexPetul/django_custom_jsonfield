@@ -60,6 +60,8 @@ def test_map_serializer_field_ok(schema: dict):
         ({"const": "string"}, {"enum": ["string"]}),  # string
         ({"const": True}, {"enum": [True]}),  # bool
         ({"const": None}, None),  # none
+        ({"const": {"k": "v", "k2": 10}}, {"enum": [{"k": "v", "k2": 10}]}),  # dict
+        ({"const": [10, 20]}, {"enum": [[10, 20]]}),  # list
     ],
 )
 def test_map_serializer_field_const(schema: dict, expected: Any):
