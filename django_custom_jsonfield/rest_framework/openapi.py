@@ -39,11 +39,7 @@ class CustomJSONFieldSerializerExtension(OpenApiSerializerFieldExtension):
             "null": OpenApiTypes.NONE,
         }
 
-        schema_type = schema["type"]
-        if schema_type not in basic_type_mapping:
-            raise KeyError(f"Unknown schema type: {schema_type}")
-
-        return build_basic_type(basic_type_mapping[schema_type])
+        return build_basic_type(basic_type_mapping[schema["type"]])
 
     def map_serializer_field(self, auto_schema, direction):
         schema = self.target.schema
