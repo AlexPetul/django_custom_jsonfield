@@ -18,6 +18,8 @@ from django_custom_jsonfield.fields import CustomJSONField
     ],
 )
 def test_json_schema_invalid(schema: dict):
+    """Test Django returns errors if JSON schema is invalid."""
+
     class FakeModel(models.Model):
         json_field = CustomJSONField(schema=schema)
 
@@ -52,7 +54,6 @@ def test_json_schema_ok():
             app_label = "test_app"
 
     instance = FakeModel()
-
     assert instance.check() == []
 
 
@@ -61,6 +62,8 @@ def test_json_schema_ok():
     [10, 10.00, list(), tuple(), set(), "", b"", True, None],
 )
 def test_schema_type_invalid(schema: Any):
+    """Test Django raises exception if JSON schema is not typed correctly."""
+
     with pytest.raises(ValueError) as e:
         CustomJSONField(schema=schema)
 
@@ -78,9 +81,17 @@ def test_schema_type_invalid(schema: Any):
                 "required": ["name", "age"],
             },
         ),
+        (
+            "invalid_string",
+            {
+                "const": "custom_string",
+            },
+        ),
     ],
 )
-def test_validate_value_against_schema(value, schema):
+def test_validate_value_against_schema(value: Any, schema: Any):
+    """Test Django raises exception if value doesn't match JSON schema."""
+
     class FakeModel(models.Model):
         json_field = CustomJSONField(schema=schema)
 

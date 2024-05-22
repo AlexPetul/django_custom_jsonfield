@@ -27,7 +27,4 @@ class CustomJSONField(serializers.JSONField):
         try:
             jsonschema.validate(value, self.schema)
         except jsonschema.exceptions.ValidationError:
-            raise serializers.ValidationError(
-                self.error_messages["invalid_data"],
-                code="invalid_data",
-            )
+            self.fail("invalid_data")

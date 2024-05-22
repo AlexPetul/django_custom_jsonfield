@@ -8,47 +8,70 @@ from django_custom_jsonfield.rest_framework.serializers import CustomJSONField
 
 
 @pytest.mark.parametrize(
-    "schema",
+    "schema,expected",
     [
-        {
-            "type": "object",
-            "properties": {"name": {"type": "string"}},
-            "required": ["name"],
-            "additionalProperties": True,
-        },
-        {
-            "type": "object",
-            "properties": {"name": {"type": "string"}},
-        },
-        {
-            "items": {"type": "integer"},
-            "type": "array",
-            "maxLength": 1,
-            "minLength": 1,
-        },
-        {
-            "items": {"type": "integer"},
-            "type": "array",
-        },
-        {
-            "type": "number",
-        },
-        {
-            "type": "string",
-        },
-        {
-            "type": "integer",
-        },
-        {
-            "type": "boolean",
-        },
+        (
+            {
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+                "required": ["name"],
+                "additionalProperties": True,
+            },
+            {
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+                "required": ["name"],
+                "additionalProperties": True,
+            },
+        ),
+        (
+            {
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+            },
+            {
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+            },
+        ),
+        (
+            {
+                "items": {"type": "integer"},
+                "type": "array",
+                "maxLength": 1,
+                "minLength": 1,
+            },
+            {
+                "items": {"type": "integer"},
+                "type": "array",
+                "maxLength": 1,
+                "minLength": 1,
+            },
+        ),
+        (
+            {
+                "items": {"type": "integer"},
+                "type": "array",
+            },
+            {
+                "items": {"type": "integer"},
+                "type": "array",
+            },
+        ),
+        # basic types
+        ({"type": "number"}, {"type": "number"}),
+        ({"type": "string"}, {"type": "string"}),
+        ({"type": "integer"}, {"type": "integer"}),
+        ({"type": "boolean"}, {"type": "boolean"}),
     ],
 )
-def test_map_serializer_field_ok(schema: dict):
+def test_map_serializer_field_ok(schema: Any, expected: Any):
+    """Test correct mapping of JSON schema to OpenAPI schema."""
+
     json_field = CustomJSONField(schema=schema)
     extension = CustomJSONFieldSerializerExtension(json_field)
     data = extension.map_serializer_field(Mock(), "response")
-    assert data == schema
+    assert data == expected
 
 
 @pytest.mark.parametrize(
