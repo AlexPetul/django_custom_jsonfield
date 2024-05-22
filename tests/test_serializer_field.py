@@ -17,7 +17,9 @@ from django_custom_jsonfield.rest_framework.serializers import CustomJSONField
         ),
     ],
 )
-def test_validate(value: dict, schema: dict):
+def test_validate_invalid_value(value: dict, schema: dict):
+    """Test serializer raises an exception if value does not match JSON schema."""
+
     class FakeSerializer(serializers.Serializer):
         json_field = CustomJSONField(schema=schema)
 
