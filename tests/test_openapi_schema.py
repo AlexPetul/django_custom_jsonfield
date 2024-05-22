@@ -1,5 +1,5 @@
 from typing import Any
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -76,12 +76,16 @@ def test_map_serializer_field_const(schema: dict, expected: Any):
 @pytest.mark.parametrize(
     "schema",
     [
-        {
-            "type": "test",
-        },
+        {"type": "unknown_type"},
     ],
 )
-def test_map_serializer_field_invalid_schema(schema: dict):
+@patch(
+    "django_custom_jsonfield.rest_framework.serializers.jsonschema.validators.validator_for",
+    new=Mock(),
+)
+def test_map_serializer_field_fallback(schema: Any):
+    """Test fallback to string."""
+
     json_field = CustomJSONField(schema=schema)
     extension = CustomJSONFieldSerializerExtension(json_field)
     data = extension.map_serializer_field(Mock(), "response")
