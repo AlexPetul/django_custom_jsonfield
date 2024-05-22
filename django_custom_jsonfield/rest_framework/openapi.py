@@ -48,6 +48,12 @@ class CustomJSONFieldSerializerExtension(OpenApiSerializerFieldExtension):
     def map_serializer_field(self, auto_schema, direction):
         schema = self.target.schema
 
+        if "const" in schema:
+            if schema["const"] is None:
+                return None
+
+            return {"enum": [schema["const"]]}
+
         try:
             if schema["type"] == "object":
                 return self.build_object_schema(schema)
